@@ -42,10 +42,10 @@ class SendForgotPasswordEmailService {
     );
 
     await this.mailProvider.sendMail({
-      to: {
-        name: user.name,
-        email: user.email,
-      },
+      // to: {
+      //   name: user.name,
+      //   email: user.email,
+      // },
       subject: '[GoBarber] Recuperação de senha',
       templateData: {
         file: forgotPasswordTemplate,
