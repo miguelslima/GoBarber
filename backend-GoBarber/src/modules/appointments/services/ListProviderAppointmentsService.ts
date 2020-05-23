@@ -1,6 +1,7 @@
 import { injectable, inject } from 'tsyringe';
 
 import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
+import { classToClass } from 'class-transformer';
 import Appointment from '../infra/typeorm/entities/Appointment';
 import IAppointmentRepository from '../repositories/IAppointmentsRepository';
 
@@ -30,7 +31,7 @@ class ListProviderAppointmentsService {
     const cacheKey = `provider-appointments:${provider_id}:${year}-${month}-${day}`;
 
     let appointments = await this.cacheProvider.recovery<Appointment[]>(
-      'onitorrinco',
+      cacheKey,
     );
 
     if (!appointments) {
@@ -44,7 +45,7 @@ class ListProviderAppointmentsService {
       );
     }
 
-    await this.cacheProvider.save(cacheKey, appointments);
+    await this.cacheProvider.save(cacheKey, classToClass(appointments));
 
     return appointments;
   }
