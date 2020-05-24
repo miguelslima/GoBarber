@@ -1,10 +1,10 @@
 // import AppError from '@shared/errors/AppError';
 
-import FakeAppointmentsRepository from '../repositories/fakes/FakeAppointmentsRepository';
+import FakeAppointmentsRepository from '@modules/appointments/repositories/fakes/FakeAppointmentsRepository';
 import ListProviderMonthAvailabilityService from './ListProviderMonthAvailabilityService';
 
-let fakeAppointmentsRepository: FakeAppointmentsRepository;
 let listProviderMonthAvailability: ListProviderMonthAvailabilityService;
+let fakeAppointmentsRepository: FakeAppointmentsRepository;
 
 describe('ListProviderMonthAvailability', () => {
   beforeEach(() => {
@@ -14,11 +14,17 @@ describe('ListProviderMonthAvailability', () => {
     );
   });
 
-  it('should be able to list the provider the month availability from provider', async () => {
+  it('should be able to list the availability from provider', async () => {
     await fakeAppointmentsRepository.create({
       provider_id: 'user',
       user_id: 'user',
-      date: new Date(2020, 4, 20, 8, 0, 0),
+      date: new Date(2020, 3, 20, 8, 0, 0), // month number 3 means April in Javascript Date object
+    });
+
+    await fakeAppointmentsRepository.create({
+      provider_id: 'user',
+      user_id: 'user',
+      date: new Date(2020, 4, 20, 8, 0, 0), // month number 4 means May in Javascript Date object
     });
 
     await fakeAppointmentsRepository.create({
@@ -78,7 +84,7 @@ describe('ListProviderMonthAvailability', () => {
     await fakeAppointmentsRepository.create({
       provider_id: 'user',
       user_id: 'user',
-      date: new Date(2020, 4, 21, 10, 0, 0),
+      date: new Date(2020, 4, 21, 8, 0, 0),
     });
 
     const availability = await listProviderMonthAvailability.execute({

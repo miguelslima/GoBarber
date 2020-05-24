@@ -1,9 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import mime from 'mime';
 import aws, { S3 } from 'aws-sdk';
+import mime from 'mime';
 import uploadConfig from '@config/upload';
-
 import IStorageProvider from '../models/IStorageProvider';
 
 class DiskStorageProvider implements IStorageProvider {
@@ -21,7 +20,7 @@ class DiskStorageProvider implements IStorageProvider {
     const ContentType = mime.getType(originalPath);
 
     if (!ContentType) {
-      throw new Error('File not found');
+      throw new Error('File not found.');
     }
 
     const fileContent = await fs.promises.readFile(originalPath);
@@ -33,7 +32,7 @@ class DiskStorageProvider implements IStorageProvider {
         ACL: 'public-read',
         Body: fileContent,
         ContentType,
-        ContentDisposition: `inline; filename=${file}`,
+        ContentDisposition: `inline; filename=${file}.jpg`,
       })
       .promise();
 
@@ -45,7 +44,7 @@ class DiskStorageProvider implements IStorageProvider {
   public async deleteFile(file: string): Promise<void> {
     await this.client
       .deleteObject({
-        Bucket: 'gostack-gobarber11',
+        Bucket: uploadConfig.config.aws.bucket,
         Key: file,
       })
       .promise();

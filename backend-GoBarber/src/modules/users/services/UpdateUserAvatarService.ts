@@ -1,10 +1,9 @@
-import { inject, injectable } from 'tsyringe';
+import { injectable, inject } from 'tsyringe';
 
 import AppError from '@shared/errors/AppError';
+import User from '@modules/users/infra/typeorm/entities/User';
+import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import IStorageProvider from '@shared/container/providers/StorageProvider/models/IStorageProvider';
-import IUsersRepository from '../repositories/IUsersRepository';
-
-import User from '../infra/typeorm/entities/User';
 
 interface IRequest {
   user_id: string;
@@ -29,16 +28,17 @@ class UpdateUserAvatarService {
     }
 
     if (user.avatar) {
-      await this.storageProvider.deleteFile(user.avatar);
+      this.storageProvider.deleteFile(user.avatar);
     }
 
-    const fileName = await this.storageProvider.saveFile(avatarFilename);
+    const filename = await this.storageProvider.saveFile(avatarFilename);
 
-    user.avatar = fileName;
+    user.avatar = filename;
 
     await this.usersRepository.save(user);
 
     return user;
   }
 }
+
 export default UpdateUserAvatarService;

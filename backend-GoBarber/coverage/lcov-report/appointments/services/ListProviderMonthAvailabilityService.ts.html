@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>21/21</span>
+                <span class='fraction'>22/22</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>19/19</span>
+                <span class='fraction'>20/20</span>
             </div>
         
             
@@ -118,7 +118,8 @@
 <a name='L59'></a><a href='#L59'>59</a>
 <a name='L60'></a><a href='#L60'>60</a>
 <a name='L61'></a><a href='#L61'>61</a>
-<a name='L62'></a><a href='#L62'>62</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -138,30 +139,31 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">31x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">31x</span>
@@ -182,9 +184,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { injectable, inject } from 'tsyringe';
 import { getDaysInMonth, getDate } from 'date-fns';
 &nbsp;
-import IAppointmentRepository from '../repositories/IAppointmentsRepository';
+import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository';
 &nbsp;
-interface IRequest {
+interface IRequestDTO {
   provider_id: string;
   month: number;
   year: number;
@@ -197,35 +199,36 @@ type IResponse = Array&lt;{
 &nbsp;
 @injectable()
 class ListProviderMonthAvailabilityService {
+  // dependency inversion
   constructor(
     @inject('AppointmentsRepository')
-    private appointmentsRepository: IAppointmentRepository,
+    private appointmentsRepository: IAppointmentsRepository,
   ) {}
 &nbsp;
   public async execute({
     provider_id,
     month,
     year,
-  }: IRequest): Promise&lt;IResponse&gt; {
-    const appointments = await this.appointmentsRepository.findAllInMonthFromProvider(
+  }: IRequestDTO): Promise&lt;IResponse&gt; {
+    const appointmentsInMonth = await this.appointmentsRepository.findAllInMonthFromProvider(
       {
         provider_id,
-        year,
         month,
+        year,
       },
     );
 &nbsp;
-    const numberOfDaysInMonth = getDaysInMonth(new Date(year, month - 1));
+    const numberOfDaysInMonth = getDaysInMonth(new Date(year, month - 1)); // minus because of JS Date
 &nbsp;
     const eachDayArray = Array.from(
-      {
-        length: numberOfDaysInMonth,
-      },
+      { length: numberOfDaysInMonth },
       (_, index) =&gt; index + 1,
     );
 &nbsp;
+    console.log(eachDayArray);
+&nbsp;
     const availability = eachDayArray.map(day =&gt; {
-      const appointmentsInDay = appointments.filter(appointment =&gt; {
+      const appointmentsInDay = appointmentsInMonth.filter(appointment =&gt; {
         return getDate(appointment.date) === day;
       });
 &nbsp;
@@ -247,7 +250,7 @@ export default ListProviderMonthAvailabilityService;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Fri May 22 2020 09:44:24 GMT-0300 (GMT-03:00)
+                at Sun May 24 2020 17:02:23 GMT-0300 (GMT-03:00)
             </div>
         </div>
         <script src="../../prettify.js"></script>

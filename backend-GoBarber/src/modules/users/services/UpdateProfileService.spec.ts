@@ -1,120 +1,121 @@
-import UpdateProfileService from '@modules/users/services/UpdateProfileService';
-import FakeUserRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import AppError from '@shared/errors/AppError';
-import FakeHashProvider from '../providers/HashProvider/fakes/FakeHashProvider';
 
-let fakeUserRepository: FakeUserRepository;
+import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
+import FakeHashProvider from '@modules/users/providers/HashProvider/fakes/FakeHashProvider';
+import UpdateProfileService from './UpdateProfileService';
+
+let fakeUsersRepository: FakeUsersRepository;
 let fakeHashProvider: FakeHashProvider;
-let updateProfileService: UpdateProfileService;
+let updateProfile: UpdateProfileService;
 
-describe('CreateUser', () => {
+describe('UpdateProfile', () => {
   beforeEach(() => {
-    fakeUserRepository = new FakeUserRepository();
+    fakeUsersRepository = new FakeUsersRepository();
     fakeHashProvider = new FakeHashProvider();
-    updateProfileService = new UpdateProfileService(
-      fakeUserRepository,
+    updateProfile = new UpdateProfileService(
+      fakeUsersRepository,
       fakeHashProvider,
     );
   });
 
-  it('should be able to update the profile', async () => {
-    const user = await fakeUserRepository.create({
+  it('should be able to update the user profile', async () => {
+    const user = await fakeUsersRepository.create({
       name: 'John Doe',
-      email: 'johndoe@example.com',
-      password: '1234567',
+      email: 'johndoe@test.com',
+      password: '123456',
     });
 
-    const userUpdated = await updateProfileService.execute({
+    const updatedUser = await updateProfile.execute({
       user_id: user.id,
-      name: 'John Doe2',
-      email: 'johndoe2@example.com',
+      name: 'Another John',
+      email: 'update.profile@test.com',
     });
 
-    expect(userUpdated.name).toBe('John Doe2');
-    expect(userUpdated.email).toBe('johndoe2@example.com');
+    expect(updatedUser?.name).toBe('Another John');
+    expect(updatedUser?.email).toBe('update.profile@test.com');
   });
 
-  it('should not be able to update the profile of a non existing user', async () => {
-    await expect(
-      updateProfileService.execute({
-        user_id: '', // non existing user
-        name: 'John Doe2',
-        email: 'johndoe2@example.com',
-      }),
-    ).rejects.toBeInstanceOf(AppError);
-  });
-
-  it('should not be able to change the email to another using e-mail', async () => {
-    await fakeUserRepository.create({
-      name: 'Teste',
-      email: 'teste@example.com',
-      password: '123456',
-    });
-
-    const user = await fakeUserRepository.create({
+  it('should not be able to change the email to a already existent email', async () => {
+    await fakeUsersRepository.create({
       name: 'John Doe',
-      email: 'johndoe@example.com',
+      email: 'johndoe@test.com',
+      password: '123456',
+    });
+
+    const user = await fakeUsersRepository.create({
+      name: 'Test',
+      email: 'test@test.com',
       password: '123456',
     });
 
     await expect(
-      updateProfileService.execute({
+      updateProfile.execute({
         user_id: user.id,
-        name: 'John Test',
-        email: 'teste@example.com',
+        name: 'Another John',
+        email: 'johndoe@test.com',
       }),
     ).rejects.toBeInstanceOf(AppError);
   });
 
   it('should be able to update the password', async () => {
-    const user = await fakeUserRepository.create({
+    const user = await fakeUsersRepository.create({
       name: 'John Doe',
-      email: 'johndoe@example.com',
+      email: 'johndoe@test.com',
       password: '123456',
     });
 
-    const userUpdated = await updateProfileService.execute({
+    const updatedUser = await updateProfile.execute({
       user_id: user.id,
-      name: 'John Doe2',
-      email: 'johndoe2@example.com',
+      name: 'Another John',
+      email: 'update.profile@test.com',
       password: '123123',
       old_password: '123456',
     });
 
-    expect(userUpdated.password).toBe('123123');
+    expect(updatedUser?.password).toBe('123123');
   });
 
-  it('should not be able to update the password without inform the old password', async () => {
-    const user = await fakeUserRepository.create({
+  it('should not be able to update the password without the old password', async () => {
+    const user = await fakeUsersRepository.create({
       name: 'John Doe',
-      email: 'johndoe@example.com',
+      email: 'johndoe@test.com',
       password: '123456',
     });
 
     await expect(
-      updateProfileService.execute({
+      updateProfile.execute({
         user_id: user.id,
-        name: 'John Doe2',
-        email: 'johndoe2@example.com',
+        name: 'Another John',
+        email: 'update.profile@test.com',
         password: '123123',
       }),
     ).rejects.toBeInstanceOf(AppError);
   });
 
-  it('should be not able to update the password with wrong old password', async () => {
-    const user = await fakeUserRepository.create({
+  it('should not be able to update the password with wrong old password', async () => {
+    const user = await fakeUsersRepository.create({
       name: 'John Doe',
-      email: 'johndoe@example.com',
+      email: 'johndoe@test.com',
       password: '123456',
     });
 
     await expect(
-      updateProfileService.execute({
+      updateProfile.execute({
         user_id: user.id,
-        name: 'John Doe2',
-        email: 'johndoe2@example.com',
-        password: '123123',
+        name: 'Another John',
+        email: 'update.profile@test.com',
         old_password: 'wrong-old-password',
+        password: '123123',
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+  });
+
+  it('should not be able to update the profile from non-existing user', async () => {
+    await expect(
+      updateProfile.execute({
+        user_id: 'invalid-user-id',
+        name: 'John Doe',
+        email: 'johndoe@test.com',
       }),
     ).rejects.toBeInstanceOf(AppError);
   });

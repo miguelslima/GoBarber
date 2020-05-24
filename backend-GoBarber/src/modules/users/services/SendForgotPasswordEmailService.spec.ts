@@ -1,14 +1,14 @@
 import AppError from '@shared/errors/AppError';
 
+import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
+import FakeUserTokensRepository from '@modules/users/repositories/fakes/FakeUserTokensRepository';
 import FakeMailProvider from '@shared/container/providers/MailProvider/fakes/FakeMailProvider';
-import FakeUsersRepository from '../repositories/fakes/FakeUsersRepository';
-import FakeUserTokensRepository from '../repositories/fakes/FakeUserTokensRepository';
-import SendForgotPasswordEmail from './SendForgotPasswordEmailService';
+import SendForgotPasswordEmailService from './SendForgotPasswordEmailService';
 
 let fakeUsersRepository: FakeUsersRepository;
 let fakeMailProvider: FakeMailProvider;
 let fakeUserTokensRepository: FakeUserTokensRepository;
-let sendForgotPasswordEmail: SendForgotPasswordEmail;
+let sendForgotPasswordEmail: SendForgotPasswordEmailService;
 
 describe('SendForgotPasswordEmail', () => {
   beforeEach(() => {
@@ -16,7 +16,7 @@ describe('SendForgotPasswordEmail', () => {
     fakeMailProvider = new FakeMailProvider();
     fakeUserTokensRepository = new FakeUserTokensRepository();
 
-    sendForgotPasswordEmail = new SendForgotPasswordEmail(
+    sendForgotPasswordEmail = new SendForgotPasswordEmailService(
       fakeUsersRepository,
       fakeMailProvider,
       fakeUserTokensRepository,
@@ -25,40 +25,44 @@ describe('SendForgotPasswordEmail', () => {
 
   it('should be able to recover the password using the email', async () => {
     const sendMail = jest.spyOn(fakeMailProvider, 'sendMail');
+
     await fakeUsersRepository.create({
       name: 'John Doe',
-      email: 'johndoe@example.com',
+      email: 'johndoe@test.com',
       password: '123456',
     });
 
     await sendForgotPasswordEmail.execute({
-      email: 'johndoe@example.com',
+      email: 'johndoe@test.com',
     });
 
     expect(sendMail).toHaveBeenCalled();
   });
 
-  it('should not be able to recover a non-existing user password', async () => {
+  it('should be not able to recover a non-existing user password', async () => {
+    jest.spyOn(fakeMailProvider, 'sendMail');
+
     await expect(
       sendForgotPasswordEmail.execute({
-        email: 'johndoe@example.com',
+        email: 'johndoe@test.com',
       }),
     ).rejects.toBeInstanceOf(AppError);
   });
 
   it('should generate a forgot password token', async () => {
+    jest.spyOn(fakeMailProvider, 'sendMail');
     const generateToken = jest.spyOn(fakeUserTokensRepository, 'generate');
 
     const user = await fakeUsersRepository.create({
       name: 'John Doe',
-      email: 'johndoe@example.com',
+      email: 'johndoe@test.com',
       password: '123456',
     });
 
     await sendForgotPasswordEmail.execute({
-      email: 'johndoe@example.com',
+      email: 'johndoe@test.com',
     });
 
-    expect(generateToken).toHaveBeenCalledWith(user.id);
+    await expect(generateToken).toHaveBeenCalledWith(user.id);
   });
 });

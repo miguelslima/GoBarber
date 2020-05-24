@@ -1,7 +1,7 @@
 import { injectable, inject } from 'tsyringe';
 import { getHours, isAfter } from 'date-fns';
 
-import IAppointmentsRepository from '../repositories/IAppointmentsRepository';
+import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository';
 
 interface IRequest {
   provider_id: string;
@@ -37,11 +37,13 @@ class ListProviderDayAvailabilityService {
       },
     );
 
-    const hoursStart = 8;
+    const hourStart = 8;
 
     const eachHourArray = Array.from(
-      { length: 10 },
-      (_, index) => index + hoursStart,
+      {
+        length: 10,
+      },
+      (_, index) => index + hourStart,
     );
 
     const currentDate = new Date(Date.now());

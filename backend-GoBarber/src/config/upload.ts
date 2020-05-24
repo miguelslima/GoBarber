@@ -10,9 +10,7 @@ interface IUploadConfig {
   tmpFolder: string;
   uploadsFolder: string;
 
-  multer: {
-    storage: StorageEngine;
-  };
+  multer: { storage: StorageEngine };
 
   config: {
     disk: {};
@@ -43,7 +41,7 @@ export default {
   config: {
     disk: {},
     aws: {
-      bucket: 'gostack-gobarber11',
+      bucket: 'tiagofelipe-go-barber',
     },
   },
 } as IUploadConfig;

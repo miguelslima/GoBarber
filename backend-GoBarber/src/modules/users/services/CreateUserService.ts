@@ -1,11 +1,10 @@
-import { inject, injectable } from 'tsyringe';
+import { injectable, inject } from 'tsyringe';
 
 import AppError from '@shared/errors/AppError';
+import User from '@modules/users/infra/typeorm/entities/User';
+import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+import IHashProvider from '@modules/users/providers/HashProvider/models/IHashProvider';
 import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
-import IUsersRepository from '../repositories/IUsersRepository';
-import IHashProvider from '../providers/HashProvider/models/IHashProvider';
-
-import User from '../infra/typeorm/entities/User';
 
 interface IRequest {
   name: string;
@@ -22,7 +21,7 @@ class CreateUserService {
     @inject('HashProvider')
     private hashProvider: IHashProvider,
 
-    @inject('CachProvider')
+    @inject('CacheProvider')
     private cacheProvider: ICacheProvider,
   ) {}
 
@@ -30,12 +29,12 @@ class CreateUserService {
     const checkUserExists = await this.usersRepository.findByEmail(email);
 
     if (checkUserExists) {
-      throw new AppError('Email address alread used.');
+      throw new AppError('Email address already exist.', 400);
     }
 
     const hashedPassword = await this.hashProvider.generateHash(password);
 
-    const user = await this.usersRepository.create({
+    const user = this.usersRepository.create({
       name,
       email,
       password: hashedPassword,
