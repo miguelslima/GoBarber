@@ -40,6 +40,8 @@ class SendForgotPasswordEmailService {
       'forgot_password.hbs',
     );
 
+    console.log(token);
+
     await this.mailProvider.sendMail({
       to: {
         name: user.name,

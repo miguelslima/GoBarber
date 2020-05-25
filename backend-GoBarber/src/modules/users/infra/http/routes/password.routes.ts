@@ -1,12 +1,13 @@
 import { Router } from 'express';
 import { celebrate, Segments, Joi } from 'celebrate';
 
-import ForgotPasswordController from '@modules/users/infra/http/controllers/ForgotPasswordController';
-import ResetPasswordController from '@modules/users/infra/http/controllers/ResetPasswordController';
+import ForgotPasswordController from '../controllers/ForgotPasswordController';
+import ResetPasswordController from '../controllers/ResetPasswordController';
 
-const passwordRouter = Router();
 const forgotPasswordController = new ForgotPasswordController();
 const resetPasswordController = new ResetPasswordController();
+
+const passwordRouter = Router();
 
 passwordRouter.post(
   '/forgot',
@@ -17,7 +18,6 @@ passwordRouter.post(
   }),
   forgotPasswordController.create,
 );
-
 passwordRouter.post(
   '/reset',
   celebrate({
