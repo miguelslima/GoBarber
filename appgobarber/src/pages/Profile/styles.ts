@@ -4,14 +4,14 @@ import { Platform } from 'react-native';
 export const Container = styled.View`
   flex: 1;
   justify-content: center;
-  padding: 0 30px ${Platform.OS === 'android' ? 50 : 40}px;
+  padding: 0 30px ${Platform.OS === 'android' ? 0 : 40}px;
   position: relative;
 `;
 
 export const BackButton = styled.TouchableOpacity`
   position: absolute;
   left: 24px;
-  top: 64px;
+  top: 34px;
 `;
 
 export const Title = styled.Text`
@@ -29,6 +29,5 @@ export const UserAvatar = styled.Image`
   width: 186px;
   height: 186px;
   border-radius: 98px;
-  margin-top: 64px;
   align-self: center;
 `;

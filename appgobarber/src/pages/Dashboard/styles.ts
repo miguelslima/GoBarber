@@ -86,3 +86,5 @@ export const ProviderMetaText = styled.Text`
   color: #999591;
   font-family: 'RobotoSlab-Regular';
 `;
+
+export const Logout = styled.TouchableOpacity``;

@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 
 import { useNavigation } from '@react-navigation/native';
+import { View } from 'react-native';
 import { useAuth } from '../../hooks/auth';
 
 import api from '../../services/api';
@@ -21,6 +22,7 @@ import {
   ProviderName,
   ProviderMeta,
   ProviderMetaText,
+  Logout,
 } from './styles';
 
 export interface Provider {
@@ -32,7 +34,7 @@ export interface Provider {
 const Dashboard: React.FC = () => {
   const [providers, setProviders] = useState<Provider[]>([]);
 
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const { navigate } = useNavigation();
 
   useEffect(() => {
@@ -51,6 +53,11 @@ const Dashboard: React.FC = () => {
     },
     [navigate],
   );
+
+  const navigateToLogout = useCallback(() => {
+    signOut();
+  }, []);
+  // navigate('Profile');
 
   return (
     <Container>
@@ -93,6 +100,12 @@ const Dashboard: React.FC = () => {
           </ProviderContainer>
         )}
       />
+      <Logout
+        onPress={navigateToLogout}
+        style={{ marginBottom: 10, alignItems: 'center' }}
+      >
+        <Icon name="log-out" size={20} color="#ff9900" />
+      </Logout>
     </Container>
   );
 };
