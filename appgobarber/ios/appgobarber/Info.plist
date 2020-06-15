@@ -57,14 +57,7 @@
 	<array>
 		<string>RobotoSlab-Medium.ttf</string>
 		<string>RobotoSlab-Regular.ttf</string>
-		<string>RobotoSlab-VariableFont_wght.ttf</string>
-		<string>RobotoSlab-Black.ttf</string>
-		<string>RobotoSlab-Bold.ttf</string>
-		<string>RobotoSlab-ExtraBold.ttf</string>
-		<string>RobotoSlab-ExtraLight.ttf</string>
-		<string>RobotoSlab-Light.ttf</string>
-		<string>RobotoSlab-SemiBold.ttf</string>
-		<string>RobotoSlab-Thin.ttf</string>
+    <string>Feather.ttf</string>
 	</array>
 </dict>
 </plist>
