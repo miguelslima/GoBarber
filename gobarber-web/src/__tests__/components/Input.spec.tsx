@@ -16,8 +16,8 @@ jest.mock('@unform/core', () => {
   };
 });
 
-describe('Input Component', () => {
-  it('should be able to render and input', () => {
+describe('Input component', () => {
+  it('should be able to render an input', () => {
     const { getByPlaceholderText } = render(
       <Input name="email" placeholder="E-mail" />,
     );
@@ -36,19 +36,19 @@ describe('Input Component', () => {
     fireEvent.focus(inputElement);
 
     await wait(() => {
-      expect(containerElement).toHaveStyle('border-color: #ff9900;');
-      expect(containerElement).toHaveStyle('color: #ff9000;');
+      expect(containerElement).toHaveStyle('border-color: #ff9000');
+      expect(containerElement).toHaveStyle('color: #ff9000');
     });
 
     fireEvent.blur(inputElement);
 
     await wait(() => {
-      expect(containerElement).not.toHaveStyle('border-color: #ff9900;');
-      expect(containerElement).not.toHaveStyle('color: #ff9000;');
+      expect(containerElement).not.toHaveStyle('border-color: #ff9000');
+      expect(containerElement).not.toHaveStyle('color: #ff9000');
     });
   });
 
-  it('should keep input border highlight when input filled', async () => {
+  it('should keep input border highlight when input is filled', async () => {
     const { getByPlaceholderText, getByTestId } = render(
       <Input name="email" placeholder="E-mail" />,
     );
@@ -57,13 +57,12 @@ describe('Input Component', () => {
     const containerElement = getByTestId('input-container');
 
     fireEvent.change(inputElement, {
-      target: { value: 'johndoe@example.com.br' },
+      target: { value: 'johndoe@example.com' },
     });
-
-    fireEvent.blur(inputElement);
+    fireEvent.focus(inputElement);
 
     await wait(() => {
-      expect(containerElement).not.toHaveStyle('color: #ff9900;');
+      expect(containerElement).toHaveStyle('color: #ff9000');
     });
   });
 });

@@ -3,7 +3,7 @@ import { render, fireEvent, wait } from '@testing-library/react';
 import SignIn from '../../pages/SignIn';
 
 const mockedHistoryPush = jest.fn();
-const mockedSignIn = jest.fn();
+const mockedSidnIn = jest.fn();
 const mockedAddToast = jest.fn();
 
 jest.mock('react-router-dom', () => {
@@ -18,7 +18,7 @@ jest.mock('react-router-dom', () => {
 jest.mock('../../hooks/auth', () => {
   return {
     useAuth: () => ({
-      signIn: mockedSignIn,
+      signIn: mockedSidnIn,
     }),
   };
 });
@@ -39,11 +39,11 @@ describe('SignIn Page', () => {
   it('should be able to sign in', async () => {
     const { getByPlaceholderText, getByText } = render(<SignIn />);
 
-    const emaailField = getByPlaceholderText('E-mail');
+    const emailField = getByPlaceholderText('E-mail');
     const passwordField = getByPlaceholderText('Senha');
     const buttonElement = getByText('Entrar');
 
-    fireEvent.change(emaailField, { target: { value: 'johndoe@example.com' } });
+    fireEvent.change(emailField, { target: { value: 'johndoe@example.com' } });
     fireEvent.change(passwordField, { target: { value: '123456' } });
 
     fireEvent.click(buttonElement);
@@ -56,11 +56,11 @@ describe('SignIn Page', () => {
   it('should not be able to sign in with invalid credentials', async () => {
     const { getByPlaceholderText, getByText } = render(<SignIn />);
 
-    const emaailField = getByPlaceholderText('E-mail');
+    const emailField = getByPlaceholderText('E-mail');
     const passwordField = getByPlaceholderText('Senha');
     const buttonElement = getByText('Entrar');
 
-    fireEvent.change(emaailField, { target: { value: 'not-valid-email' } });
+    fireEvent.change(emailField, { target: { value: 'not-valid-email' } });
     fireEvent.change(passwordField, { target: { value: '123456' } });
 
     fireEvent.click(buttonElement);
@@ -71,17 +71,17 @@ describe('SignIn Page', () => {
   });
 
   it('should display an error if login fails', async () => {
-    mockedSignIn.mockImplementation(() => {
+    mockedSidnIn.mockImplementation(() => {
       throw new Error();
     });
 
     const { getByPlaceholderText, getByText } = render(<SignIn />);
 
-    const emaailField = getByPlaceholderText('E-mail');
+    const emailField = getByPlaceholderText('E-mail');
     const passwordField = getByPlaceholderText('Senha');
     const buttonElement = getByText('Entrar');
 
-    fireEvent.change(emaailField, { target: { value: 'johndoe@example.com' } });
+    fireEvent.change(emailField, { target: { value: 'johndoe@example.com' } });
     fireEvent.change(passwordField, { target: { value: '123456' } });
 
     fireEvent.click(buttonElement);
